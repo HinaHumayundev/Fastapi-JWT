@@ -27,4 +27,18 @@ def encode_token(self, user_id):
         algorithm= 'HS256'
     )
 
+def decode_token(self, token):
+    try:
+        payload = jwt.decode(token,self.secret, algorithm=['HS256'])
+        return payload['sub']
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, details = 'Signature has expired')
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(status_code=401, details = 'Invalid token')
+    
+def auth_wrapper(self, auth: HTTPAuthorizationCredentials = Security(security)):
+    return self.decode_token(auth.credentials)
+    
+
+
 
